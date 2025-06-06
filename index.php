@@ -153,7 +153,16 @@ $month_flags = array();
 for ($i = 0; $i < 12; $i++) {
   $current_month = ($start_month + $i - 1) % 12 + 1;
   $current_year = $base_year + floor(($start_month + $i - 1) / 12);
-  $first_weekdays[$i + 1] = date('N', strtotime("$current_year-$current_month-01"));
+  
+  // Get the ISO weekday (1=Monday, 7=Sunday)
+  $iso_weekday = date('N', strtotime("$current_year-$current_month-01"));
+  
+  // Convert ISO weekday to calendar position (1=Sunday, 2=Monday, etc.)
+  // ISO: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=7
+  // Calendar: Sun=1, Mon=2, Tue=3, Wed=4, Thu=5, Fri=6, Sat=7
+  $calendar_weekday = ($iso_weekday == 7) ? 1 : $iso_weekday + 1;
+  
+  $first_weekdays[$i + 1] = $calendar_weekday;
   $month_flags[$i + 1] = false; // Flag to track first days
 }
 
@@ -164,7 +173,7 @@ for ($month_index = 1; $month_index <= 12; $month_index++) {
   $current_year = $base_year + floor(($start_month + $month_index - 1) / 12);
   for ($x = 1; $x <= 42; $x++) {
     if (!$month_flags[$month_index]) {
-      if ($first_weekdays[$month_index] == $x) {
+      if ($first_weekdays[$month_index] == (($x - 1) % 7) + 1) {
         $dates[$month_index][$x] = $day;
         $day++;
         $month_flags[$month_index] = true;
