@@ -146,54 +146,38 @@ echo '</tr>';
 echo '</thead>';
 echo '<tbody>';
 
-// Prepare a list of the first weekdays for each of the 12 months
-$first_weekdays = array();
-$month_flags = array();
+// Generate the date matrix for 12 months (for aligned-weekdays layout)
+$dates = array();
 
-for ($i = 0; $i < 12; $i++) {
-  $current_month = ($start_month + $i - 1) % 12 + 1;
-  $current_year = $base_year + floor(($start_month + $i - 1) / 12);
-  
-  // Get the weekday using date('w') where Sunday=0, Monday=1, etc.
-  $weekday = date('w', strtotime("$current_year-$current_month-01"));
-  
-  // Convert to 1-based indexing where Sunday=1, Monday=2, etc.
-  $first_weekdays[$i + 1] = $weekday + 1;
-  $month_flags[$i + 1] = false; // Flag to track first days
-}
-
-// Generate the date matrix for 12 months
 for ($month_index = 1; $month_index <= 12; $month_index++) {
-  $day = 1;
   $current_month = ($start_month + $month_index - 1) % 12 + 1;
   $current_year = $base_year + floor(($start_month + $month_index - 1) / 12);
-  for ($x = 1; $x <= 42; $x++) {
-    if (!$month_flags[$month_index]) {
-      if ($first_weekdays[$month_index] == (($x - 1) % 7) + 1) {
-        $dates[$month_index][$x] = $day;
-        $day++;
-        $month_flags[$month_index] = true;
-      } else {
-        $dates[$month_index][$x] = 0;
-      }
-    } else {
-      if ($day > cal_days_in_month(CAL_GREGORIAN, $current_month, $current_year)) {
-        $dates[$month_index][$x] = 0;
-      } else {
-        $dates[$month_index][$x] = $day;
-      }
-      $day++;
-    }
+  
+  // Get the first day of the month and its weekday
+  $first_day_weekday = date('w', strtotime("$current_year-$current_month-01")); // 0=Sunday, 1=Monday, etc.
+  $days_in_month = cal_days_in_month(CAL_GREGORIAN, $current_month, $current_year);
+  
+  // Initialize all positions to 0 (empty)
+  for ($pos = 1; $pos <= 42; $pos++) {
+    $dates[$month_index][$pos] = 0;
+  }
+  
+  // Fill in the actual dates
+  for ($day = 1; $day <= $days_in_month; $day++) {
+    // Calculate which position this day should be in
+    // Position = first_day_weekday + day - 1, but we need to account for weeks
+    $position = $first_day_weekday + $day;
+    $dates[$month_index][$position] = $day;
   }
 }
 
 // Set weekend days
 if (isset($_REQUEST['sofshavua'])) {
-  $weekend_day_1 = 5;
-  $weekend_day_2 = 6;
+  $weekend_day_1 = 5; // Friday
+  $weekend_day_2 = 6; // Saturday
 } else {
-  $weekend_day_1 = 6;
-  $weekend_day_2 = 7;
+  $weekend_day_1 = 0; // Sunday
+  $weekend_day_2 = 6; // Saturday
 }
 
 // Generate the table
@@ -211,7 +195,7 @@ if (isset($_REQUEST['layout']) && $_REQUEST['layout'] == 'aligned-weekdays') {
         echo '<td></td>';
       } else {
         $date = $current_year . '-' . str_pad($current_month, 2, '0', STR_PAD_LEFT) . '-' . str_pad($dates[$month_index][$day], 2, '0', STR_PAD_LEFT);
-        if (date('N', strtotime($date)) == $weekend_day_1 || date('N', strtotime($date)) == $weekend_day_2) {
+        if (date('w', strtotime($date)) == $weekend_day_1 || date('w', strtotime($date)) == $weekend_day_2) {
           echo '<td class="weekend">';
         } else {
           echo '<td>';
