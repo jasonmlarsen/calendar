@@ -126,7 +126,6 @@ $year_display = ($base_year == $end_year) ? $base_year : "$base_year-$end_year";
 
 // Initialize arrays and variables
 $dates = array();
-$month = $start_month;
 $month_index = 1; // Tracks the 12 months to display
 $day = 1;
 
@@ -151,15 +150,15 @@ echo '<tbody>';
 $first_weekdays = array();
 $month_flags = array();
 
-for ($i = 1; $i <= 12; $i++) {
+for ($i = 0; $i < 12; $i++) {
   $current_month = ($start_month + $i - 1) % 12 + 1;
   $current_year = $base_year + floor(($start_month + $i - 1) / 12);
-  $first_weekdays[$i] = date('N', strtotime("$current_year-$current_month-01"));
-  $month_flags[$i] = false; // Flag to track first days
+  $first_weekdays[$i + 1] = date('N', strtotime("$current_year-$current_month-01"));
+  $month_flags[$i + 1] = false; // Flag to track first days
 }
 
 // Generate the date matrix for 12 months
-while ($month_index <= 12) {
+for ($month_index = 1; $month_index <= 12; $month_index++) {
   $day = 1;
   $current_month = ($start_month + $month_index - 1) % 12 + 1;
   $current_year = $base_year + floor(($start_month + $month_index - 1) / 12);
@@ -181,7 +180,6 @@ while ($month_index <= 12) {
       $day++;
     }
   }
-  $month_index++;
 }
 
 // Set weekend days
@@ -201,7 +199,7 @@ if (isset($_REQUEST['layout']) && $_REQUEST['layout'] == 'aligned-weekdays') {
   // Aligned-weekdays layout
   while ($day <= 42) {
     echo '<tr>';
-    while ($month_index <= 12) {
+    for ($month_index = 1; $month_index <= 12; $month_index++) {
       $current_month = ($start_month + $month_index - 1) % 12 + 1;
       $current_year = $base_year + floor(($start_month + $month_index - 1) / 12);
       if ($dates[$month_index][$day] == 0) {
@@ -216,22 +214,19 @@ if (isset($_REQUEST['layout']) && $_REQUEST['layout'] == 'aligned-weekdays') {
         echo $dates[$month_index][$day];
         echo '</td>';
       }
-      $month_index++;
     }
     echo '</tr>';
-    $month_index = 1;
     $day++;
   }
 } else {
   // Default layout
   while ($day <= 31) {
     echo '<tr>';
-    while ($month_index <= 12) {
+    for ($month_index = 1; $month_index <= 12; $month_index++) {
       $current_month = ($start_month + $month_index - 1) % 12 + 1;
       $current_year = $base_year + floor(($start_month + $month_index - 1) / 12);
       if ($day > cal_days_in_month(CAL_GREGORIAN, $current_month, $current_year)) {
         echo '<td></td>';
-        $month_index++;
         continue;
       }
       if (DateTime::createFromFormat('!Y-m-d', "$current_year-$current_month-$day")->format('N') == $weekend_day_1 || DateTime::createFromFormat('!Y-m-d', "$current_year-$current_month-$day")->format('N') == $weekend_day_2) {
@@ -241,10 +236,8 @@ if (isset($_REQUEST['layout']) && $_REQUEST['layout'] == 'aligned-weekdays') {
       }
       echo '<span class="date">' . $day . '</span> <span class="day">' . substr(DateTime::createFromFormat('!Y-m-d', "$current_year-$current_month-$day")->format('D'), 0, 1) . '</span>';
       echo '</td>';
-      $month_index++;
     }
     echo '</tr>';
-    $month_index = 1;
     $day++;
   }
 }
