@@ -154,15 +154,11 @@ for ($i = 0; $i < 12; $i++) {
   $current_month = ($start_month + $i - 1) % 12 + 1;
   $current_year = $base_year + floor(($start_month + $i - 1) / 12);
   
-  // Get the ISO weekday (1=Monday, 7=Sunday)
-  $iso_weekday = date('N', strtotime("$current_year-$current_month-01"));
+  // Get the weekday using date('w') where Sunday=0, Monday=1, etc.
+  $weekday = date('w', strtotime("$current_year-$current_month-01"));
   
-  // Convert ISO weekday to calendar position (1=Sunday, 2=Monday, etc.)
-  // ISO: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=7
-  // Calendar: Sun=1, Mon=2, Tue=3, Wed=4, Thu=5, Fri=6, Sat=7
-  $calendar_weekday = ($iso_weekday == 7) ? 1 : $iso_weekday + 1;
-  
-  $first_weekdays[$i + 1] = $calendar_weekday;
+  // Convert to 1-based indexing where Sunday=1, Monday=2, etc.
+  $first_weekdays[$i + 1] = $weekday + 1;
   $month_flags[$i + 1] = false; // Flag to track first days
 }
 
