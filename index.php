@@ -85,7 +85,7 @@ p {
   background: #333;
   color: #eee;
   padding: 1em 1em .5em 1em;
-  font-size: 2vmax;
+  font-size: 1.75vmax;
   border-radius: .2em;
 }
 #info p {
