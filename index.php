@@ -102,9 +102,9 @@ p {
 <body>
 <div id="info">
 <p>👋 <strong>Hello!</strong> If you print this page, you'll get a nifty calendar that displays all of the year's dates on a single page. It will automatically fit on a single sheet of paper of any size. For best results, adjust your print settings to landscape orientation and disable the header and footer.</p>
-<p>Take in the year all at once. Fold it up and carry it with you. Jot down your notes on it. Plan things out and observe the passage of time. Above all else, be kind to others.</p>
+<p>Want a 12-month calendar that starts in April? Or June? Add "?startmonth=apr" - replace "apr" with any three-letter code for the month, and you've got it. For example, <a href="/?startmonth=june">here's June</a>.</p>
 <p>Looking for <?php echo date("Y", strtotime("now + 1 year")); ?>? <a href="?year=<?php echo date("Y", strtotime("now + 1 year")); ?>">Here you go!</a></p>
-<p style="font-size: 80%; color: #999;">Made by <a href="https://neatnik.net/">Neatnik</a> · Small changes made by <a href="https://jasonmlarsen.com/">Jason</a></p>
+<p style="font-size: 80%; color: #999;">Original idea by <a href="https://neatnik.net/">Neatnik</a> · Updated by <a href="https://jasonlarsen.dev/">Jason</a></p>
 </div>
 <?php
 date_default_timezone_set('UTC');
