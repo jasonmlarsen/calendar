@@ -97,6 +97,7 @@ p {
   color: inherit;
 }
 </style>
+<script defer src="https://analytics.jasonlarsen.net/script.js" data-website-id="b8db2f3f-81a3-425a-a67b-e2dffef33e27"></script>
 </head>
 <body>
 <div id="info">
